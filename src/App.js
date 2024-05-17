@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
 import Schedule from './components/Schedule';
 import About from './components/About';
-import CustomNavbar from './components/Navbar';
+import CustomNavbar from './components/CustomNavbar';
 
 const App = () => {
   return (
