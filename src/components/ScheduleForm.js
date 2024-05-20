@@ -14,6 +14,7 @@ const ScheduleForm = ({ onAddSchedule }) => {
     notes: '',
     machine: ''
   });
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,6 +26,11 @@ const ScheduleForm = ({ onAddSchedule }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.machine) {
+      setError("Please select a machine.");
+      return;
+    }
+    setError('');
     try {
       const newScheduleRef = push(ref(database, 'schedules'));
       await newScheduleRef.set(formData);
@@ -32,6 +38,7 @@ const ScheduleForm = ({ onAddSchedule }) => {
       alert("Schedule submitted!");
     } catch (error) {
       console.error("Error submitting schedule: ", error);
+      setError("Error submitting schedule. Please try again.");
     }
   };
 
@@ -151,6 +158,8 @@ const ScheduleForm = ({ onAddSchedule }) => {
             </Form.Select>
           </Col>
         </Form.Group>
+
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
         <Button type="submit" className="btn btn-primary">Submit</Button>
       </Form>
