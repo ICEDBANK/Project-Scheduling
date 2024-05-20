@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { database } from '../firebase';
+import { Table } from 'react-bootstrap';
 
 const ScheduleLt712 = () => {
   const [schedules, setSchedules] = useState([]);
@@ -26,17 +27,32 @@ const ScheduleLt712 = () => {
   return (
     <div>
       <h1>LT712 Machine Schedule</h1>
-      {schedules.map((schedule, index) => (
-        <div key={index}>
-          <p>Customer Name: {schedule.customerName}</p>
-          <p>Order Number: {schedule.orderNumber}</p>
-          <p>PO Number: {schedule.poNumber}</p>
-          <p>Estimated Hours: {schedule.estimatedHours}</p>
-          <p>Due Date: {schedule.dueDate}</p>
-          <p>Nest Number: {schedule.nestNumber}</p>
-          <p>Notes: {schedule.notes}</p>
-        </div>
-      ))}
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Customer Name</th>
+            <th>Order Number</th>
+            <th>PO Number</th>
+            <th>Estimated Hours</th>
+            <th>Due Date</th>
+            <th>Nest Number</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {schedules.map((schedule, index) => (
+            <tr key={index}>
+              <td>{schedule.customerName}</td>
+              <td>{schedule.orderNumber}</td>
+              <td>{schedule.poNumber}</td>
+              <td>{schedule.estimatedHours}</td>
+              <td>{schedule.dueDate}</td>
+              <td>{schedule.nestNumber}</td>
+              <td>{schedule.notes}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </div>
   );
 };
