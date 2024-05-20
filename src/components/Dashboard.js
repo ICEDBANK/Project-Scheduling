@@ -3,12 +3,14 @@ import { ref, onValue } from 'firebase/database';
 import { database } from '../firebase';
 import { Table } from 'react-bootstrap';
 
+// Function to calculate the ISO week number
 const getWeekNumber = (date) => {
   const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
   const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
   return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
 };
 
+// Function to get the current ISO week number and year
 const getCurrentWeekAndYear = () => {
   const today = new Date();
   return {
@@ -17,9 +19,19 @@ const getCurrentWeekAndYear = () => {
   };
 };
 
+// Function to convert time string (hh:mm:ss) to hours
 const timeToHours = (time) => {
   const [hours, minutes, seconds] = time.split(':').map(Number);
   return hours + minutes / 60 + seconds / 3600;
+};
+
+// Function to convert hours to time string (hh:mm:ss)
+const hoursToTime = (hours) => {
+  const totalSeconds = Math.floor(hours * 3600);
+  const hh = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+  const mm = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+  const ss = (totalSeconds % 60).toString().padStart(2, '0');
+  return `${hh}:${mm}:${ss}`;
 };
 
 const Dashboard = () => {
@@ -57,13 +69,11 @@ const Dashboard = () => {
       const estimatedHours = timeToHours(schedule.estimatedHours);
       const dueYear = dueDate.getFullYear();
 
+      // If past due, subtract from current week
       if (dueDate < now) {
         timeSlots[schedule.machine][currentWeek - 1] -= estimatedHours;
-      } else if (dueYear === currentYear && week < 52) {
-        timeSlots[schedule.machine][week] -= estimatedHours;
-      } else if (dueYear > currentYear && week >= currentWeek) {
-        // This is to handle the future weeks of the next year once they become relevant
-        timeSlots[schedule.machine][week] -= estimatedHours;
+      } else if (dueYear === currentYear && week <= 52) {
+        timeSlots[schedule.machine][week - 1] -= estimatedHours;
       }
     });
 
@@ -87,18 +97,21 @@ const Dashboard = () => {
             const weekIndex = (currentWeek - 1 + index) % 52;
             const displayWeek = currentWeek + index;
             const displayYear = currentYear + Math.floor(displayWeek / 52);
+            if (displayYear > currentYear && displayWeek % 52 < currentWeek) {
+              return null; // Skip weeks from the next year that are not yet relevant
+            }
             const isOverbooked = (machine) => availableTime[machine][weekIndex] < 0;
             return (
               <tr key={index}>
                 <td>{`Week ${displayWeek % 52 + 1} (${displayYear})`}</td>
                 <td style={{ backgroundColor: isOverbooked('LT7') ? 'red' : 'white' }}>
-                  {availableTime.LT7[weekIndex].toFixed(2)}
+                  {hoursToTime(availableTime.LT7[weekIndex])}
                 </td>
                 <td style={{ backgroundColor: isOverbooked('LT8') ? 'red' : 'white' }}>
-                  {availableTime.LT8[weekIndex].toFixed(2)}
+                  {hoursToTime(availableTime.LT8[weekIndex])}
                 </td>
                 <td style={{ backgroundColor: isOverbooked('LT712') ? 'red' : 'white' }}>
-                  {availableTime.LT712[weekIndex].toFixed(2)}
+                  {hoursToTime(availableTime.LT712[weekIndex])}
                 </td>
               </tr>
             );
