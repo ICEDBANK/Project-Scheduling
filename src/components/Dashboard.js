@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { database } from '../firebase';
 import { Table } from 'react-bootstrap';
-import { getISOWeek, format } from 'date-fns';
+import { getISOWeek, getYear } from 'date-fns';
 
 // Function to get the current ISO week number and year
 const getCurrentWeekAndYear = () => {
   const today = new Date();
+  const week = getISOWeek(today);
+  const year = getYear(today);
+  console.log(`Current ISO Week: ${week}, Year: ${year}`);
   return {
-    week: getISOWeek(today),
-    year: today.getFullYear()
+    week,
+    year,
   };
 };
 
@@ -38,6 +41,7 @@ const Dashboard = () => {
   const { week: currentWeek, year: currentYear } = getCurrentWeekAndYear();
 
   useEffect(() => {
+    console.log("Fetching schedules from Firebase...");
     const schedulesRef = ref(database, 'schedules');
     onValue(schedulesRef, (snapshot) => {
       const data = snapshot.val();
@@ -45,6 +49,7 @@ const Dashboard = () => {
       for (let id in data) {
         loadedSchedules.push(data[id]);
       }
+      console.log("Schedules fetched:", loadedSchedules);
       setSchedules(loadedSchedules);
     });
   }, []);
@@ -61,7 +66,10 @@ const Dashboard = () => {
       const dueDate = new Date(schedule.dueDate);
       const week = getISOWeek(dueDate);
       const estimatedHours = timeToHours(schedule.estimatedHours);
-      const dueYear = dueDate.getFullYear();
+      const dueYear = getYear(dueDate);
+
+      console.log(`Processing schedule:`, schedule);
+      console.log(`Due date: ${format(dueDate, 'yyyy-MM-dd')}, ISO Week: ${week}, Year: ${dueYear}`);
 
       // If past due, subtract from current week
       if (dueDate < now) {
@@ -71,6 +79,7 @@ const Dashboard = () => {
       }
     });
 
+    console.log("Updated available time slots:", timeSlots);
     setAvailableTime(timeSlots);
   }, [schedules, currentWeek, currentYear]);
 
@@ -95,6 +104,7 @@ const Dashboard = () => {
               return null; // Skip weeks from the next year that are not yet relevant
             }
             const isOverbooked = (machine) => availableTime[machine][weekIndex] < 0;
+            console.log(`Rendering week ${displayWeek % 52 + 1} (${displayYear}), Available LT7: ${hoursToTime(availableTime.LT7[weekIndex])}`);
             return (
               <tr key={index}>
                 <td>{`Week ${displayWeek % 52 + 1} (${displayYear})`}</td>
