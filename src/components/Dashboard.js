@@ -9,9 +9,12 @@ const getWeekNumber = (date) => {
   return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
 };
 
-const getCurrentWeek = () => {
+const getCurrentWeekAndYear = () => {
   const today = new Date();
-  return getWeekNumber(today);
+  return {
+    week: getWeekNumber(today),
+    year: today.getFullYear()
+  };
 };
 
 const timeToHours = (time) => {
@@ -26,7 +29,7 @@ const Dashboard = () => {
     LT8: Array(52).fill(80),
     LT712: Array(52).fill(40),
   });
-  const [currentWeek, setCurrentWeek] = useState(getCurrentWeek());
+  const { week: currentWeek, year: currentYear } = getCurrentWeekAndYear();
 
   useEffect(() => {
     const schedulesRef = ref(database, 'schedules');
@@ -52,17 +55,20 @@ const Dashboard = () => {
       const dueDate = new Date(schedule.dueDate);
       const week = getWeekNumber(dueDate);
       const estimatedHours = timeToHours(schedule.estimatedHours);
+      const dueYear = dueDate.getFullYear();
 
-      // If past due, subtract from current week
       if (dueDate < now) {
         timeSlots[schedule.machine][currentWeek - 1] -= estimatedHours;
-      } else if (week < 52) {
+      } else if (dueYear === currentYear && week < 52) {
+        timeSlots[schedule.machine][week] -= estimatedHours;
+      } else if (dueYear > currentYear && week >= currentWeek) {
+        // This is to handle the future weeks of the next year once they become relevant
         timeSlots[schedule.machine][week] -= estimatedHours;
       }
     });
 
     setAvailableTime(timeSlots);
-  }, [schedules, currentWeek]);
+  }, [schedules, currentWeek, currentYear]);
 
   return (
     <div>
@@ -79,10 +85,12 @@ const Dashboard = () => {
         <tbody>
           {Array.from({ length: 52 }, (_, index) => {
             const weekIndex = (currentWeek - 1 + index) % 52;
+            const displayWeek = currentWeek + index;
+            const displayYear = currentYear + Math.floor(displayWeek / 52);
             const isOverbooked = (machine) => availableTime[machine][weekIndex] < 0;
             return (
               <tr key={index}>
-                <td>{`Week ${weekIndex + 1}`}</td>
+                <td>{`Week ${displayWeek % 52 + 1} (${displayYear})`}</td>
                 <td style={{ backgroundColor: isOverbooked('LT7') ? 'red' : 'white' }}>
                   {availableTime.LT7[weekIndex].toFixed(2)}
                 </td>
