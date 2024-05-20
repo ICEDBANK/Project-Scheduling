@@ -2,19 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { database } from '../firebase';
 import { Table } from 'react-bootstrap';
-
-// Function to calculate the ISO week number
-const getWeekNumber = (date) => {
-  const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-  const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
-  return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-};
+import { getISOWeek, format } from 'date-fns';
 
 // Function to get the current ISO week number and year
 const getCurrentWeekAndYear = () => {
   const today = new Date();
   return {
-    week: getWeekNumber(today),
+    week: getISOWeek(today),
     year: today.getFullYear()
   };
 };
@@ -65,7 +59,7 @@ const Dashboard = () => {
     const now = new Date();
     schedules.forEach((schedule) => {
       const dueDate = new Date(schedule.dueDate);
-      const week = getWeekNumber(dueDate);
+      const week = getISOWeek(dueDate);
       const estimatedHours = timeToHours(schedule.estimatedHours);
       const dueYear = dueDate.getFullYear();
 
