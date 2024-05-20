@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Button, Col, Form, Row } from 'react-bootstrap';
+import { ref, push } from 'firebase/database';
+import { database } from '../firebase';
 
 const ScheduleForm = ({ onAddSchedule }) => {
   const [formData, setFormData] = useState({
@@ -21,11 +23,16 @@ const ScheduleForm = ({ onAddSchedule }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onAddSchedule(formData); // Pass data to parent component
-    localStorage.setItem('formData', JSON.stringify(formData)); // Store data in localStorage
-    alert("Schedule submitted!");
+    try {
+      const newScheduleRef = push(ref(database, 'schedules'));
+      await newScheduleRef.set(formData);
+      onAddSchedule(formData);
+      alert("Schedule submitted!");
+    } catch (error) {
+      console.error("Error submitting schedule: ", error);
+    }
   };
 
   return (
