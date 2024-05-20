@@ -3,7 +3,7 @@ import { Navbar, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { NavLink } from 'react-router-dom';
 
-const CustomNavbar = () => {
+const CustomNavbar = ({ to = '/', children = 'Link' }) => {
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand as={NavLink} to="/">Scheduling App</Navbar.Brand>
