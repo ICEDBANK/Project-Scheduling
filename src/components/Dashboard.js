@@ -14,6 +14,11 @@ const getCurrentWeek = () => {
   return getWeekNumber(today);
 };
 
+const timeToHours = (time) => {
+  const [hours, minutes, seconds] = time.split(':').map(Number);
+  return hours + minutes / 60 + seconds / 3600;
+};
+
 const Dashboard = () => {
   const [schedules, setSchedules] = useState([]);
   const [availableTime, setAvailableTime] = useState({
@@ -46,12 +51,13 @@ const Dashboard = () => {
     schedules.forEach((schedule) => {
       const dueDate = new Date(schedule.dueDate);
       const week = getWeekNumber(dueDate);
+      const estimatedHours = timeToHours(schedule.estimatedHours);
 
       // If past due, subtract from current week
       if (dueDate < now) {
-        timeSlots[schedule.machine][currentWeek - 1] -= parseInt(schedule.estimatedHours);
+        timeSlots[schedule.machine][currentWeek - 1] -= estimatedHours;
       } else if (week < 52) {
-        timeSlots[schedule.machine][week] -= parseInt(schedule.estimatedHours);
+        timeSlots[schedule.machine][week] -= estimatedHours;
       }
     });
 
