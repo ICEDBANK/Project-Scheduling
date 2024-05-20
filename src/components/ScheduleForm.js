@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Col, Form, Row } from 'react-bootstrap';
-import { getDatabase, ref, push, set } from 'firebase/database';
+import { ref, push, set } from 'firebase/database';
 import { database } from '../firebase';
 
 const ScheduleForm = ({ onAddSchedule }) => {
