@@ -1,16 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { ref, onValue } from 'firebase/database';
+import { database } from '../firebase';
 
-const ScheduleLt7 = ({ schedules }) => {
-  const filteredSchedules = schedules.filter(schedule => schedule.machine === 'LT7');
+const ScheduleLt7 = () => {
+  const [schedules, setSchedules] = useState([]);
 
-  if (filteredSchedules.length === 0) {
+  useEffect(() => {
+    const schedulesRef = ref(database, 'schedules');
+    onValue(schedulesRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedSchedules = [];
+      for (let id in data) {
+        if (data[id].machine === 'LT7') {
+          loadedSchedules.push(data[id]);
+        }
+      }
+      setSchedules(loadedSchedules);
+    });
+  }, []);
+
+  if (schedules.length === 0) {
     return <p>No data available for LT7.</p>;
   }
 
   return (
     <div>
       <h1>LT7 Machine Schedule</h1>
-      {filteredSchedules.map((schedule, index) => (
+      {schedules.map((schedule, index) => (
         <div key={index}>
           <p>Customer Name: {schedule.customerName}</p>
           <p>Order Number: {schedule.orderNumber}</p>
