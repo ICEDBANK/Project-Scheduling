@@ -11,8 +11,10 @@ const CustomNavbar = () => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Link as={NavLink} to="/" exact>Dashboard</Nav.Link>
-          <Nav.Link as={NavLink} to="/schedule">Schedule</Nav.Link>
-          <Nav.Link as={NavLink} to="/about">About</Nav.Link>
+          <Nav.Link as={NavLink} to="/ScheduleLt7">LT7</Nav.Link>
+          <Nav.Link as={NavLink} to="/ScheduleLt8">LT8</Nav.Link>
+          <Nav.Link as={NavLink} to="/ScheduleLt712">LT712</Nav.Link>
+          <Nav.Link as={NavLink} to="/CompletedOrder">Completed Orders</Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
