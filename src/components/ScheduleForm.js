@@ -15,6 +15,7 @@ const ScheduleForm = ({ onAddSchedule }) => {
     machine: ''
   });
   const [error, setError] = useState('');
+  const [customError, setCustomError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,12 +23,25 @@ const ScheduleForm = ({ onAddSchedule }) => {
       ...formData,
       [name]: value,
     });
+
+    if (name === 'estimatedHours') {
+      const pattern = /^[0-9]{2}:[0-9]{2}:[0-9]{2}:[0-9]{2}$/;
+      if (!pattern.test(value)) {
+        setCustomError('Invalid input. Format should be hh:mm:ss:ms.');
+      } else {
+        setCustomError('');
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.machine) {
       setError("Please select a machine.");
+      return;
+    }
+    if (customError) {
+      setError(customError);
       return;
     }
     setError('');
@@ -91,13 +105,16 @@ const ScheduleForm = ({ onAddSchedule }) => {
           <Form.Label column sm="2">Estimated Hours:</Form.Label>
           <Col sm="10">
             <Form.Control 
-              type="number" 
-              placeholder="Enter Estimated Hours" 
+              type="text" 
+              placeholder="Enter Estimated Hours (hh:mm:ss:ms)" 
               name="estimatedHours" 
               value={formData.estimatedHours} 
               onChange={handleChange} 
+              pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}:[0-9]{2}"
+              title="Format should be hh:mm:ss:ms"
               required 
             />
+            {customError && <p style={{ color: 'red' }}>{customError}</p>}
           </Col>
         </Form.Group>
 
