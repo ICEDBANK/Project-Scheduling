@@ -3,6 +3,15 @@ import { Navbar, Nav } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 
 const CustomNavbar = () => {
+
+  IF (W < 32){
+
+    Xposition <= 
+
+  }
+
+
+
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand as={NavLink} to="/">Scheduling App</Navbar.Brand>
