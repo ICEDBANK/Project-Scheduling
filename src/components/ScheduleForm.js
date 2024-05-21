@@ -27,9 +27,9 @@ const ScheduleForm = ({ onAddSchedule }) => {
     });
 
     if (name === 'estimatedHours') {
-      const pattern = /^[0-9]{2}:[0-9]{2}:[0-9]{2}:[0-9]{2}$/;
+      const pattern = /^[0-9]{2}:[0-9]{2}:[0-9]{2}$/;
       if (!pattern.test(value)) {
-        setCustomError('Invalid input. Format should be hh:mm:ss:ms.');
+        setCustomError('Invalid input. Format should be hh:mm:ss.');
       } else {
         setCustomError('');
       }
@@ -109,7 +109,7 @@ const ScheduleForm = ({ onAddSchedule }) => {
           <Col sm="10">
             <Form.Control 
               type="text" 
-              placeholder="Enter Estimated Hours (hh:mm:ss:ms)" 
+              placeholder="Enter Estimated Hours (hh:mm:ss)" 
               name="estimatedHours" 
               value={formData.estimatedHours} 
               onChange={handleChange} 
