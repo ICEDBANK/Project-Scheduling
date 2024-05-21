@@ -69,7 +69,7 @@ const Dashboard = () => {
       const dueYear = getYear(dueDate);
 
       console.log(`Processing schedule:`, schedule);
-      console.log(`Due date: ${format(dueDate, 'yyyy-MM-dd')}, ISO Week: ${week}, Year: ${dueYear}`);
+      console.log(`Due date: ${dueDate.toISOString().split('T')[0]}, ISO Week: ${week}, Year: ${dueYear}`);
 
       // If past due, subtract from current week
       if (dueDate < now) {
@@ -98,16 +98,16 @@ const Dashboard = () => {
         <tbody>
           {Array.from({ length: 52 }, (_, index) => {
             const weekIndex = (currentWeek - 1 + index) % 52;
-            const displayWeek = currentWeek + index;
-            const displayYear = currentYear + Math.floor(displayWeek / 52);
-            if (displayYear > currentYear && displayWeek % 52 < currentWeek) {
+            const displayWeek = (currentWeek - 1 + index) % 52 + 1;
+            const displayYear = currentYear + Math.floor((currentWeek - 1 + index) / 52);
+            if (displayYear > currentYear && displayWeek < currentWeek) {
               return null; // Skip weeks from the next year that are not yet relevant
             }
             const isOverbooked = (machine) => availableTime[machine][weekIndex] < 0;
-            console.log(`Rendering week ${displayWeek % 52 + 1} (${displayYear}), Available LT7: ${hoursToTime(availableTime.LT7[weekIndex])}`);
+            console.log(`Rendering week ${displayWeek} (${displayYear}), Available LT7: ${hoursToTime(availableTime.LT7[weekIndex])}`);
             return (
               <tr key={index}>
-                <td>{`Week ${displayWeek % 52 + 1} (${displayYear})`}</td>
+                <td>{`Week ${displayWeek} (${displayYear})`}</td>
                 <td style={{ backgroundColor: isOverbooked('LT7') ? 'red' : 'white' }}>
                   {hoursToTime(availableTime.LT7[weekIndex])}
                 </td>

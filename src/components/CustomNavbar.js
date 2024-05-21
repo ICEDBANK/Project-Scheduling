@@ -4,18 +4,6 @@ import { NavLink } from 'react-router-dom';
 
 const CustomNavbar = () => {
 
-  IF (Wposition == 32 && Xposition <= W/2 && UnloadingCycle == Active){
-
-    cutting = true;
-
-  }else{
-
-    cutting = false;
-
-  }
-
-
-
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand as={NavLink} to="/">Scheduling App</Navbar.Brand>
