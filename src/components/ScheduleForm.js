@@ -4,7 +4,7 @@ import { ref, push, set } from 'firebase/database';
 import { database } from '../firebase';
 
 const ScheduleForm = ({ onAddSchedule }) => {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     customerName: '',
     orderNumber: '',
     poNumber: '',
@@ -13,7 +13,9 @@ const ScheduleForm = ({ onAddSchedule }) => {
     nestNumber: '',
     notes: '',
     machine: ''
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
   const [error, setError] = useState('');
   const [customError, setCustomError] = useState('');
 
@@ -25,9 +27,9 @@ const ScheduleForm = ({ onAddSchedule }) => {
     });
 
     if (name === 'estimatedHours') {
-      const pattern = /^[0-9]{2}:[0-9]{2}:[0-9]{2}$/;
+      const pattern = /^[0-9]{2}:[0-9]{2}:[0-9]{2}:[0-9]{2}$/;
       if (!pattern.test(value)) {
-        setCustomError('Invalid input. Format should be hh:mm:ss.');
+        setCustomError('Invalid input. Format should be hh:mm:ss:ms.');
       } else {
         setCustomError('');
       }
@@ -50,6 +52,7 @@ const ScheduleForm = ({ onAddSchedule }) => {
       await set(newScheduleRef, formData);
       onAddSchedule(formData);
       alert("Schedule submitted!");
+      setFormData(initialFormData); // Clear the form fields after successful submission
     } catch (error) {
       console.error("Error submitting schedule: ", error);
       setError("Error submitting schedule. Please try again.");
@@ -106,7 +109,7 @@ const ScheduleForm = ({ onAddSchedule }) => {
           <Col sm="10">
             <Form.Control 
               type="text" 
-              placeholder="Enter Estimated Hours (hh:mm:ss)" 
+              placeholder="Enter Estimated Hours (hh:mm:ss:ms)" 
               name="estimatedHours" 
               value={formData.estimatedHours} 
               onChange={handleChange} 
