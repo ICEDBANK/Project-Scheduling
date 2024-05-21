@@ -4,9 +4,13 @@ import { NavLink } from 'react-router-dom';
 
 const CustomNavbar = () => {
 
-  IF (W < 32){
+  IF (Wposition == 32 && Xposition <= W/2 && UnloadingCycle == Active){
 
-    Xposition <= 
+    cutting = true;
+
+  }else{
+
+    cutting = false;
 
   }
 
