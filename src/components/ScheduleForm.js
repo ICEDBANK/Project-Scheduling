@@ -50,7 +50,9 @@ const ScheduleForm = ({ onAddSchedule }) => {
     try {
       const newScheduleRef = push(ref(database, 'schedules'));
       await set(newScheduleRef, formData);
-      onAddSchedule(formData);
+      if (onAddSchedule) {
+        onAddSchedule(formData);
+      }
       alert("Schedule submitted!");
       setFormData(initialFormData); // Clear the form fields after successful submission
     } catch (error) {
